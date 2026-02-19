@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BNPL Dashboard</title>
+  <link rel="stylesheet" href="/css/base.css">
+  <link rel="stylesheet" href="/css/dashboard.css">
+  <style>
+    /* Professional Layout Styling */
+    body {
+      background-color: #f8fafc;
+      margin: 0;
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      overflow-x: hidden;
+    }
+
+    /* CENTERED NAVBAR LOGIC */
+    nav {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr; /* Creates 3 equal zones */
+      align-items: center;
+      padding: 12px 60px;
+      background: #fff;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+
+    .nav-left {
+      grid-column: 1; /* Empty space balancer */
+    }
+
+    .nav-center-title {
+      grid-column: 2; /* Forces title to middle */
+      margin: 0;
+      color: #2c3e50;
+      font-size: 22px;
+      white-space: nowrap;
+    }
+
+    .nav-right {
+      grid-column: 3;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 20px;
+    }
+
+    .dashboard-container {
+      max-width: 1100px;
+      margin: 40px auto;
+      text-align: center;
+      padding: 0 20px;
+    }
+
+    .hero-section {
+      margin-bottom: 50px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .hero-image {
+      width: 100%;
+      max-width: 580px;
+      border-radius: 20px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+      transition: transform 0.3s;
+    }
+
+    .bottom-nav-row {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      margin-top: 20px;
+      flex-wrap: nowrap;
+    }
+
+    .nav-card {
+      flex: 1;
+      min-width: 200px;
+      padding: 22px 10px;
+      text-decoration: none;
+      color: white;
+      font-weight: 600;
+      border-radius: 10px;
+      font-size: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.2s ease-in-out;
+      border: none;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    }
+
+    .predict { background: #0066ff; }
+    .history { background: #4db8ff; }
+    .upload { background: #28a745; }
+    .transparency { background: #ffc107; color: #333; }
+
+    .nav-card:hover {
+      transform: translateY(-3px);
+      filter: brightness(1.05);
+      box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+    }
+
+    .profile-dropdown { position: relative; display: inline-block; }
+    .dropdown-content { display: none; position: absolute; right: 0; top: 45px; background: white; min-width: 220px; border-radius: 8px; box-shadow: 0 8px 16px rgba(0,0,0,0.15); z-index: 1000; padding: 10px 0; }
+    .dropdown-content a { color: #333; padding: 12px 16px; text-decoration: none; display: block; font-size: 14px; cursor: pointer; border-bottom: 1px solid #f8fafc; }
+    .dropdown-content a:hover { background: #f8fafc; }
+    
+    .profile-icon { width: 40px; height: 40px; background: #007bff; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; overflow: hidden; font-size: 20px; }
+    
+    .modal { display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); }
+    .modal-content { background: white; margin: 5% auto; padding: 30px; width: 90%; max-width: 480px; border-radius: 16px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); }
+    
+    .form-group { margin-bottom: 15px; text-align: left; }
+    .form-group label { display: block; margin-bottom: 5px; font-weight: 600; color: #475569; font-size: 13px; }
+    .form-group input, .form-group textarea, .form-group select { width: 100%; padding: 10px; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 14px; box-sizing: border-box; }
+    
+    #photoPreview { width: 80px; height: 80px; border-radius: 50%; background: #f1f5f9; margin: 0 auto 15px; display: flex; align-items: center; justify-content: center; overflow: hidden; border: 2px solid #e2e8f0; font-size: 30px; }
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-left"></div> <h2 class="nav-center-title">🛡️ BNPL Strategic Engine</h2>
+  
+  <div class="nav-right">
+    <span style="color: #64748b;">Welcome, <strong id="welcomeName" style="color: #1e293b;">User</strong>!</span>
+    
+    <div class="profile-dropdown">
+      <div class="profile-icon" id="headerProfileIcon" onclick="toggleProfileMenu()">👤</div>
+      <div class="dropdown-content" id="profileMenu">
+        <div style="padding: 10px 16px; border-bottom: 1px solid #f1f5f9;">
+          <div id="dropdownFullName" style="font-weight: bold; font-size: 14px;">Loading...</div>
+          <div id="dropdownEmail" style="font-size: 12px; color: #94a3b8;">Loading...</div>
+        </div>
+        <a onclick="openEditModal()">✏️ Edit Profile Info</a>
+        <a onclick="showChangePassword()">🔑 Change Password</a>
+        <a onclick="openSupportModal()">❓ Help & Support</a>
+        <a onclick="logout()" style="color: #ef4444; font-weight: bold;">🚪 Logout</a>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<div class="dashboard-container">
+  <div class="hero-section">
+    <img src="/pages/bnpl.jpg" alt="BNPL Risk Assessment" class="hero-image">
+  </div>
+
+  <div class="bottom-nav-row">
+    <a href="/pages/predict.html" class="nav-card predict">📊 Predict EMI Risk</a>
+    <a href="/pages/emi_history.html" class="nav-card history">📋 View History</a>
+    <a href="/pages/upload.html" class="nav-card upload">📤 Upload CSV File</a>
+    <a href="/pages/transparency.html" class="nav-card transparency">🔍 Risk Transparency</a>
+  </div>
+</div>
+
+<div id="supportModal" class="modal">
+  <div class="modal-content">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+      <h3 style="margin:0;">❓ Help & Support</h3>
+      <span onclick="closeSupportModal()" style="cursor:pointer; font-size:24px; color: #94a3b8;">&times;</span>
+    </div>
+    <form onsubmit="submitHelpRequest(event)">
+      <div class="form-group">
+        <label>Name</label>
+        <input type="text" id="helpName" readonly style="background: #f8fafc;">
+      </div>
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" id="helpEmail" readonly style="background: #f8fafc;">
+      </div>
+      <div class="form-group">
+        <label>Issue Category</label>
+        <select id="helpCategory">
+          <option value="Technical Error">Technical Error</option>
+          <option value="Account Access">Account Access</option>
+          <option value="Risk Prediction Query">Risk Prediction Query</option>
+          <option value="Other">Other</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Detailed Message</label>
+        <textarea id="helpDetails" rows="4" placeholder="How can we help you today?" required></textarea>
+      </div>
+      <button type="submit" style="width:100%; background:#1e293b; color:white; border:none; padding:12px; border-radius:8px; font-weight:bold; cursor:pointer;">Submit Request</button>
+    </form>
+  </div>
+</div>
+
+<div id="editProfileModal" class="modal">
+  <div class="modal-content">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+      <h3 style="margin:0;">✏️ Edit Profile Info</h3>
+      <span onclick="closeModal()" style="cursor:pointer; font-size:24px; color: #94a3b8;">&times;</span>
+    </div>
+
+    <div id="photoPreview">👤</div>
+
+    <div class="form-group">
+      <label>Profile Photo</label>
+      <input type="file" id="editPhoto" accept="image/*" onchange="previewImage(this)">
+    </div>
+    <div class="form-group">
+      <label>Full Name</label>
+      <input type="text" id="editName" placeholder="Enter full name">
+    </div>
+    <div class="form-group">
+      <label>Age</label>
+      <input type="number" id="editAge" placeholder="Enter age">
+    </div>
+    <div class="form-group">
+      <label>Address</label>
+      <textarea id="editAddress" rows="2" placeholder="Enter address"></textarea>
+    </div>
+    <button onclick="saveProfileChanges()" style="width:100%; background:#0066ff; color:white; border:none; padding:12px; border-radius:8px; font-weight:bold; cursor:pointer;">Update Profile</button>
+  </div>
+</div>
+
+<script src="/js/auth.js"></script>
+<script src="/js/dashboard.js"></script>
+
+</body>
+</html>

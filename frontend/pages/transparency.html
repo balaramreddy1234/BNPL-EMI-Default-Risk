@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Risk Transparency - BNPL Engine</title>
+    <link rel="stylesheet" href="/css/base.css">
+    <style>
+        body { background-color: #f4f7f6; font-family: 'Segoe UI', sans-serif; margin: 0; }
+        .container { max-width: 900px; margin: 50px auto; padding: 30px; background: white; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        h1 { color: #2c3e50; border-bottom: 3px solid #007bff; padding-bottom: 10px; }
+        .logic-card { background: #f8f9fa; padding: 20px; border-radius: 10px; margin-top: 20px; border-left: 5px solid #007bff; }
+        .logic-card h3 { margin-top: 0; color: #007bff; }
+        .factor-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 20px; }
+        .factor { background: white; padding: 15px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .back-btn { display: inline-block; margin-top: 30px; padding: 10px 20px; background: #2c3e50; color: white; text-decoration: none; border-radius: 6px; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>🔍 Decision Transparency</h1>
+    <p>Our BNPL Strategic Engine uses an advanced <strong>Random Forest Machine Learning model</strong> to ensure that every credit decision is proactive, fair, and transparent.</p>
+
+    <div class="logic-card">
+        <h3>How the Model Decides</h3>
+        <p>The model analyzes seven key financial and behavioral variables to calculate a risk probability score. Decisions are based on data, not bias, ensuring a fair evaluation for every user.</p>
+    </div>
+
+    
+
+    <div class="factor-grid">
+        <div class="factor">
+            <strong>📊 Debt-to-Income Ratio</strong>
+            <p>We analyze if your EMI obligations exceed 50% of your income. High ratios suggest a higher risk of default.</p>
+        </div>
+        <div class="factor">
+            <strong>⏱️ Repayment Behavior</strong>
+            <p>Consistent on-time payments lower your risk. Multiple critical delays (5+) increase the probability of default.</p>
+        </div>
+        <div class="factor">
+            <strong>💳 Credit Capacity</strong>
+            <p>The model checks if the requested loan exceeds your calculated capacity (Income × Tenure).</p>
+        </div>
+        <div class="factor">
+            <strong>📈 CIBIL Recovery</strong>
+            <p>For low credit scores, we prioritize users who show reliable behavioral patterns despite their past history.</p>
+        </div>
+    </div>
+
+    <div class="logic-card" style="border-left-color: #28a745; margin-top: 30px;">
+        <h3 style="color: #28a745;">Proactive Intervention</h3>
+        <p>If the model identifies you as "High Risk," it doesn't just stop there. Our engine provides <strong>Smart Suggestions</strong>—like adjusting your loan amount or tenure—to help you qualify safely.</p>
+    </div>
+
+    <a href="/pages/dashboard.html" class="back-btn">⬅️ Back to Dashboard</a>
+</div>
+
+</body>
+</html>

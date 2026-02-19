@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Predict Risk</title>
+  <link rel="stylesheet" href="/css/base.css">
+  <link rel="stylesheet" href="/css/forms.css">
+  <style>
+    .predict-container {
+      max-width: 500px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    .form-group {
+      margin: 15px 0;
+    }
+    .form-group label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+      color: #333;
+      font-size: 0.9em;
+    }
+    .form-group input {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      box-sizing: border-box;
+      font-size: 1em;
+    }
+    .form-group input:focus {
+      outline: none;
+      border-color: #007bff;
+      box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+    }
+    .predict-btn {
+      width: 100%;
+      padding: 12px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      font-size: 1em;
+      font-weight: bold;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+    .predict-btn:hover {
+      background-color: #0056b3;
+    }
+    .result-box {
+      display: none;
+      margin-top: 20px;
+      padding: 20px;
+      border-radius: 8px;
+      text-align: center;
+    }
+    
+    /* Smart Suggestion Styling - Satisfies Outcome 2 */
+    #suggestionBox {
+      display: none;
+      margin-top: 15px;
+      padding: 15px;
+      border-radius: 8px;
+      background: #fff3cd;
+      border-left: 5px solid #ffc107;
+      text-align: left;
+    }
+
+    /* Report Download Link Styling - Satisfies Outcome 4 */
+    .report-link {
+      display: inline-block;
+      margin-top: 15px;
+      padding: 10px 20px;
+      background-color: #28a745;
+      color: white;
+      text-decoration: none;
+      border-radius: 4px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body style="background-color: #f4f7f6; font-family: 'Segoe UI', sans-serif;">
+
+<div style="padding: 20px;">
+  <a href="/pages/dashboard.html" style="padding: 10px 20px; background-color: #6c757d; color: white; text-decoration: none; border-radius: 6px; font-weight: 500;">← Back to Dashboard</a>
+</div>
+
+<div class="predict-container" style="background: white; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); padding: 30px;">
+  <h2 style="text-align: center; color: #2c3e50; margin-top: 0;">EMI Default Risk Prediction</h2>
+  <p style="text-align: center; color: #718096; margin-bottom: 25px;">
+    Enter your EMI details to get a data-driven risk assessment
+  </p>
+
+  <form id="predictForm">
+    <div class="form-group">
+      <label for="income">Monthly Income (₹)</label>
+      <input id="income" type="number" placeholder="e.g., 50000" min="0" step="0.01" required>
+    </div>
+
+    <div class="form-group">
+      <label for="loan">Total Loan Amount (₹)</label>
+      <input id="loan" type="number" placeholder="e.g., 500000" min="0" step="0.01" required>
+    </div>
+
+    <div class="form-group">
+      <label for="emi">Monthly EMI (₹)</label>
+      <input id="emi" type="number" placeholder="e.g., 15000" min="0" step="0.01" required>
+    </div>
+
+    <div class="form-group">
+      <label for="tenure">Loan Tenure (months)</label>
+      <input id="tenure" type="number" placeholder="e.g., 36" min="0" step="1" required>
+    </div>
+
+    <div class="form-group">
+      <label for="ontime">On-time EMI Payments</label>
+      <input id="ontime" type="number" placeholder="e.g., 12" min="0" step="1" required>
+    </div>
+
+    <div class="form-group">
+      <label for="delays">Delayed EMI Payments</label>
+      <input id="delays" type="number" placeholder="e.g., 2" min="0" step="1" required>
+    </div>
+
+    <div class="form-group">
+      <label for="credit">Credit Score</label>
+      <input id="credit" type="number" placeholder="e.g., 750" min="300" max="900" step="1" required>
+    </div>
+
+    <button type="submit" class="predict-btn">🔍 Predict Risk</button>
+  </form>
+
+  <div id="resultBox" class="result-box">
+    <h3 id="riskLevel" style="margin: 0;"></h3>
+    <p id="probabilityText" style="color: #4a5568; margin: 10px 0;"></p>
+    
+    <div id="suggestionBox">
+        <strong style="color: #856404;">💡 Smart Suggestion:</strong>
+        <p id="suggestionText" style="margin: 5px 0 0; color: #533f03; font-size: 0.95em;"></p>
+    </div>
+
+    <a id="downloadReport" href="#" class="report-link" target="_blank" style="display: none;">📄 Download Risk Report</a>
+  </div>
+</div>
+
+
+
+<script>
+    document.getElementById("predictForm").onsubmit = async (e) => {
+        e.preventDefault();
+        const btn = e.target.querySelector('button');
+        btn.innerText = "Analyzing...";
+        btn.disabled = true;
+
+        const payload = {
+            income: document.getElementById("income").value,
+            loan: document.getElementById("loan").value,
+            emi: document.getElementById("emi").value,
+            tenure: document.getElementById("tenure").value,
+            ontime: document.getElementById("ontime").value,
+            delays: document.getElementById("delays").value,
+            credit: document.getElementById("credit").value
+        };
+
+        try {
+            const res = await fetch("/predict", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload)
+            });
+
+            const data = await res.json();
+            
+            if (data.success) {
+                const box = document.getElementById("resultBox");
+                const riskH3 = document.getElementById("riskLevel");
+                const probP = document.getElementById("probabilityText");
+                const suggBox = document.getElementById("suggestionBox");
+                const suggText = document.getElementById("suggestionText");
+                const downloadBtn = document.getElementById("downloadReport");
+
+                box.style.display = "block";
+                
+                // Set Risk Level and Color
+                riskH3.innerText = "Risk Profile: " + data.risk;
+                riskH3.style.color = data.risk === "High Risk" ? "#dc3545" : (data.risk === "Low Risk" ? "#28a745" : "#ffc107");
+                
+                probP.innerText = `System Confidence: ${(data.probability * 100).toFixed(2)}%`;
+
+                // Handle Proactive Suggestions
+                if (data.suggestion) {
+                    suggText.innerText = data.suggestion;
+                    suggBox.style.display = "block";
+                } else {
+                    suggBox.style.display = "none";
+                }
+
+                // Handle Transparency Report
+                if (data.report_url) {
+                    downloadBtn.href = `/download-report/${data.report_url}`;
+                    downloadBtn.style.display = "inline-block";
+                }
+
+                // Scroll to result
+                box.scrollIntoView({ behavior: 'smooth' });
+            } else {
+                alert("Error: " + data.error);
+            }
+        } catch (err) {
+            console.error(err);
+            alert("Connection error. Please try again.");
+        } finally {
+            btn.innerText = "🔍 Predict Risk";
+            btn.disabled = false;
+        }
+    };
+</script>
+
+</body>
+</html>

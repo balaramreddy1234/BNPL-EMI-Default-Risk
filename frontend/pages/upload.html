@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Upload Dataset</title>
+  <link rel="stylesheet" href="/css/base.css">
+  <style>
+    .upload-container {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    .file-input-wrapper {
+      margin: 20px 0;
+      padding: 20px;
+      border: 2px dashed #007bff;
+      border-radius: 8px;
+      background-color: #f8f9fa;
+      text-align: center;
+    }
+    .file-input-wrapper input[type="file"] {
+      display: none;
+    }
+    .file-label {
+      display: block;
+      padding: 20px;
+      background-color: #007bff;
+      color: white;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: bold;
+      margin: 10px 0;
+    }
+    .file-label:hover {
+      background-color: #0056b3;
+    }
+    .upload-btn {
+      padding: 10px 20px;
+      background-color: #28a745;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: bold;
+      width: 100%;
+      margin-top: 10px;
+    }
+    .upload-btn:hover {
+      background-color: #218838;
+    }
+    .analysis {
+      margin-top: 20px;
+      padding: 15px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      background-color: #f9f9f9;
+    }
+    .download-btn {
+      display: inline-block;
+      padding: 10px 15px;
+      background-color: #007bff;
+      color: white;
+      text-decoration: none;
+      border-radius: 4px;
+      margin-top: 10px;
+    }
+    .download-btn:hover {
+      background-color: #0056b3;
+    }
+    .success-message {
+      color: green;
+      font-weight: bold;
+    }
+    .error-message {
+      color: red;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+<h2>Upload EMI Dataset</h2>
+
+<div style="margin-bottom: 20px;">
+  <a href="/pages/dashboard.html" style="padding: 8px 15px; background-color: #6c757d; color: white; text-decoration: none; border-radius: 4px;">← Back to Dashboard</a>
+</div>
+
+<div class="upload-container">
+  <div class="file-input-wrapper">
+    <p style="margin: 0 0 10px 0; color: #666;">
+      <strong> Drag and drop your file here or click to select</strong><br>
+      <small style="color: #999;">Supports CSV (.csv) and PDF (.pdf) files</small>
+    </p>
+    
+    <label for="fileInput" class="file-label">
+      Choose File
+    </label>
+    <input type="file" id="fileInput" accept=".csv,.pdf" onchange="handleFileSelect()">
+    
+    <p id="fileName" style="color: #666; margin: 10px 0; font-size: 0.9em;"></p>
+  </div>
+
+  <p style="color: #666; font-size: 0.9em;">
+    <strong>Required CSV Columns:</strong> income, loan, emi, tenure, ontime, delays, credit<br>
+    <strong>For PDF:</strong> Must contain a table with the same columns
+  </p>
+
+  <button onclick="upload()" class="upload-btn">📤 Upload & Analyze</button>
+
+  <div id="analysis"></div>
+  <a id="download" class="download-btn" style="display:none;"></a>
+</div>
+
+<script src="/js/upload.js"></script>
+</body>
+</html>

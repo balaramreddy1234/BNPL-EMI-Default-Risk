@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BNPL EMI Risk</title>
+  <link rel="stylesheet" href="/css/base.css">
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      margin: 0;
+      padding: 20px;
+    }
+    .container {
+      background: white;
+      padding: 40px;
+      border-radius: 10px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+      text-align: center;
+      max-width: 600px;
+    }
+    h1 {
+      color: #333;
+      margin-bottom: 10px;
+    }
+    .subtitle {
+      color: #666;
+      margin-bottom: 30px;
+      font-size: 0.95em;
+    }
+    .btn-group {
+      display: flex;
+      gap: 15px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-top: 30px;
+    }
+    .btn {
+      padding: 12px 30px;
+      font-size: 1em;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    }
+    .btn-register {
+      background-color: #28a745;
+      color: white;
+    }
+    .btn-login {
+      background-color: #007bff;
+      color: white;
+    }
+    .features {
+      margin-top: 30px;
+      text-align: left;
+      padding-top: 30px;
+      border-top: 1px solid #eee;
+    }
+    .features h3 {
+      color: #333;
+      margin-bottom: 15px;
+    }
+    .features ul {
+      list-style: none;
+      padding: 0;
+    }
+    .features li {
+      padding: 8px 0;
+      color: #666;
+    }
+    .features li:before {
+      content: "✓ ";
+      color: #28a745;
+      font-weight: bold;
+      margin-right: 10px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h1>🏦 BNPL EMI Default Risk</h1>
+  <p class="subtitle">AI-Powered Risk Assessment System for EMI Loans</p>
+
+  <p style="color: #666; margin-bottom: 20px;">
+    Predict EMI default risk using advanced machine learning. Analyze your creditworthiness and get actionable insights.
+  </p>
+
+  <div class="btn-group">
+    <a href="/pages/register.html" class="btn btn-register">📝 Register</a>
+    <a href="/pages/login.html" class="btn btn-login">🔐 Login</a>
+  </div>
+
+  <div class="features">
+    <h3>Key Features</h3>
+    <ul>
+      <li>Individual EMI Risk Prediction</li>
+      <li>Batch CSV Analysis</li>
+      <li>PDF Risk Reports</li>
+      <li>EMI History Tracking</li>
+      <li>Transparent Risk Factors</li>
+      <li>Secure User Accounts</li>
+    </ul>
+  </div>
+</div>
+
+</body>
+</html>

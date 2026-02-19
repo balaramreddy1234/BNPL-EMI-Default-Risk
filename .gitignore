@@ -1,0 +1,23 @@
+# Python cache
+__pycache__/
+*.pyc
+
+# Environment
+.env
+
+# Database
+*.db
+
+# ML models
+backend/models/*.pkl
+
+# Uploads & reports
+backend/uploads/
+backend/reports/
+
+# ZIP files
+*.zip
+
+# OS files
+.DS_Store
+Thumbs.db
