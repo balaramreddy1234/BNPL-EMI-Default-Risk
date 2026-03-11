@@ -1,4 +1,12 @@
+import sys
 import os
+from pathlib import Path
+
+# --- VERCEL PATH FIXING (MUST BE AT THE VERY TOP) ---
+# This adds the root directory to the sys.path so 'database' and 'utils' can be found
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+sys.path.append(str(Path(BASE_DIR).parent))
+
 import joblib
 import pandas as pd
 import pytz
@@ -11,21 +19,21 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
 
 # --- 1. LOCAL MODULE IMPORTS ---
-# These must be in your repository folders
-from database.db_connection import get_db
-from database.init_db import init_database
-from utils.risk_score import classify_risk
-from utils.pdf_generator import create_visual_report
-from config import UPLOAD_FOLDER, REPORT_FOLDER
+try:
+    from database.db_connection import get_db
+    from database.init_db import init_database
+    from utils.risk_score import classify_risk
+    from utils.pdf_generator import create_visual_report
+    from config import UPLOAD_FOLDER, REPORT_FOLDER
+except ImportError as e:
+    print(f"Import Error: {e}")
 
 app = Flask(__name__)
 app.secret_key = "bnpl_ultra_secure_key_telangana_2026"
 
 # --- 2. VERCEL SERVERLESS PATH ADJUSTMENTS ---
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-
-# On Vercel, we must use /tmp for any file writing (Uploads/Reports)
 if os.environ.get('VERCEL'):
+    # Vercel filesystem is read-only; use /tmp for all write operations
     REPORT_FOLDER = "/tmp/reports"
     UPLOAD_FOLDER = "/tmp/uploads"
     PROFILE_PIC_DIR = "/tmp/profile_pics"
@@ -51,35 +59,38 @@ IST = pytz.timezone("Asia/Kolkata")
 
 # --- 4. DATABASE AUTO-MIGRATOR ---
 def apply_migrations():
-    db = get_db()
-    schema_map = {
-        "predictions": [
-            ("filename", "TEXT"), ("high_risk_count", "INTEGER"), 
-            ("low_risk_count", "INTEGER"), ("total_count", "INTEGER"),
-            ("probability", "REAL"), ("report_path", "TEXT"),
-            ("income", "REAL"), ("loan", "REAL"), ("emi", "REAL"),
-            ("tenure", "INTEGER"), ("ontime", "INTEGER"), ("delays", "INTEGER"),
-            ("credit", "INTEGER"), ("risk", "TEXT"), ("source", "TEXT")
-        ],
-        "users": [
-            ("age", "INTEGER"), ("address", "TEXT"), 
-            ("profile_photo", "TEXT"), ("mobile", "TEXT"),
-            ("last_login", "TIMESTAMP")
-        ]
-    }
-    for table, columns in schema_map.items():
-        for col_name, col_type in columns:
-            try:
-                db.execute(f"ALTER TABLE {table} ADD COLUMN {col_name} {col_type}")
-            except Exception:
-                pass 
-    db.execute("""CREATE TABLE IF NOT EXISTS feedback (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        user_id INTEGER, name TEXT, email TEXT, 
-        category TEXT, details TEXT, 
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP)""")
-    db.commit()
-    db.close()
+    try:
+        db = get_db()
+        schema_map = {
+            "predictions": [
+                ("filename", "TEXT"), ("high_risk_count", "INTEGER"), 
+                ("low_risk_count", "INTEGER"), ("total_count", "INTEGER"),
+                ("probability", "REAL"), ("report_path", "TEXT"),
+                ("income", "REAL"), ("loan", "REAL"), ("emi", "REAL"),
+                ("tenure", "INTEGER"), ("ontime", "INTEGER"), ("delays", "INTEGER"),
+                ("credit", "INTEGER"), ("risk", "TEXT"), ("source", "TEXT")
+            ],
+            "users": [
+                ("age", "INTEGER"), ("address", "TEXT"), 
+                ("profile_photo", "TEXT"), ("mobile", "TEXT"),
+                ("last_login", "TIMESTAMP")
+            ]
+        }
+        for table, columns in schema_map.items():
+            for col_name, col_type in columns:
+                try:
+                    db.execute(f"ALTER TABLE {table} ADD COLUMN {col_name} {col_type}")
+                except Exception:
+                    pass 
+        db.execute("""CREATE TABLE IF NOT EXISTS feedback (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER, name TEXT, email TEXT, 
+            category TEXT, details TEXT, 
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP)""")
+        db.commit()
+        db.close()
+    except Exception as e:
+        print(f"Migration Error: {e}")
 
 # Initialize System
 init_database()
@@ -87,8 +98,10 @@ apply_migrations()
 
 # --- 5. ML MODEL LOADING ---
 try:
-    # Path logic to find models whether running locally or in /api/
-    MODEL_DIR = os.path.join(BASE_DIR, "models") if not os.path.exists(os.path.join(BASE_DIR, "..", "models")) else os.path.join(BASE_DIR, "..", "models")
+    # Look for models folder in the root directory (parent of /api)
+    ROOT_DIR = Path(BASE_DIR).parent
+    MODEL_DIR = os.path.join(ROOT_DIR, "models")
+    
     model = joblib.load(os.path.join(MODEL_DIR, "random_forest_model.pkl"))
     scaler = joblib.load(os.path.join(MODEL_DIR, "scaler.pkl"))
     print("✅ System Ready: ML Random Forest Model Loaded")
@@ -279,7 +292,7 @@ def download(filename):
 
 @app.route("/")
 def index():
-    return jsonify(status="online", message="BNPL Risk API IST 2026")
+    return jsonify(status="online", message="BNPL Risk API IST 2026", location="Hyderabad")
 
 # EXPORT FOR VERCEL
 app = app
